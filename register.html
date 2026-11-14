@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Socadel - Create account</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="card">
+        <div class="brand">
+            <h1>SOCA<span><DEl></DEl></span></h1>
+            <p>Create an Employee account</p>
+        </div>
+        <p id="msg" class="msg"></p>
+        <form method="POST" action="register.php" onsubmit="return checkForm()">
+            <input type="text" name="name" placeholder="Full name" required>
+            <input type="email" name="email" placeholder="name@camlight.cm"
+                   pattern=".+@camlight\.cm" title="Use your @camlight.cm email address" required>
+            <input type="password" id="password" name="password" placeholder="Password" required>
+            <p class="hint">
+                <span id="r-len">8+ characters</span> ·
+                <span id="r-up">1 uppercase</span> ·
+                <span id="r-num">1 number</span>
+            </p>
+            <input type="password" id="confirm" name="confirm" placeholder="Confirm password" required>
+            <button type="submit">Create account</button>
+        </form>
+        <p class="link">Already have an account? <a href="login.html">Login</a></p>
+    </div>
+
+    <script>
+        const pw = document.getElementById("password");
+        const checks = {
+            "r-len": v => v.length >= 8,
+            "r-up": v => /[A-Z]/.test(v),
+            "r-num": v => /\d/.test(v)
+        };
+
+        pw.addEventListener("input", () => {
+            for (const id in checks) {
+                document.getElementById(id).classList.toggle("ok", checks[id](pw.value));
+            }
+        });
+
+        function checkForm() {
+            const msg = document.getElementById("msg");
+            for (const id in checks) {
+                if (!checks[id](pw.value)) {
+                    msg.textContent = "Password does not meet the requirements.";
+                    return false;
+                }
+            }
+            if (pw.value !== document.getElementById("confirm").value) {
+                msg.textContent = "Passwords do not match.";
+                return false;
+            }
+            return true;
+        }
+
+        const err = new URLSearchParams(window.location.search).get("error");
+        const errors = {
+            password: "Password does not meet the requirements.",
+            mismatch: "Passwords do not match.",
+            exists: "This email is already registered.",
+            domain: "Only @camlight.cm email addresses are allowed."
+        };
+        if (err && errors[err]) {
+            document.getElementById("msg").textContent = errors[err];
+        }
+    </script>
+</body>
+</html>
